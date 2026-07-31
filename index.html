@@ -99,10 +99,6 @@
             color: #0f172a;
         }
 
-        .schedule-link-btn:hover i {
-            color: var(--accent-color) !important;
-        }
-
         .control-bar {
             max-width: 1300px;
             margin: 0 auto 30px auto;
@@ -162,24 +158,6 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
             position: relative;
-        }
-
-        .art-card.draggable-enabled {
-            cursor: grab;
-        }
-        .art-card.draggable-enabled:active {
-            cursor: grabbing;
-        }
-
-        .art-card.dragging {
-            opacity: 0.4;
-            border: 2px dashed var(--accent-color);
-        }
-
-        .art-card.drag-over {
-            transform: scale(1.03);
-            border-color: var(--accent-color);
-            box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.3);
         }
 
         .art-card:hover {
@@ -402,7 +380,6 @@
             transform: scale(1.1);
             z-index: 1;
             opacity: 0.9;
-            will-change: background-image;
         }
 
         .slider-track {
@@ -414,7 +391,6 @@
             left: 0;
             z-index: 2;
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform;
         }
 
         .slider-item {
@@ -496,7 +472,6 @@
             color: #0f172a;
         }
 
-        /* 讓前台顯示支援 HTML 樣式（如粗體、斜體、清單） */
         .modal-desc, .modal-process-desc, .modal-faq-desc {
             color: var(--text-secondary);
             font-size: 0.88rem;
@@ -513,7 +488,7 @@
             margin: 6px 0;
         }
 
-        .modal-process-box {
+        .modal-process-box, .modal-faq-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
@@ -521,25 +496,7 @@
             margin-bottom: 16px;
         }
 
-        .modal-process-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #334155;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .modal-faq-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .modal-faq-title {
+        .modal-process-title, .modal-faq-title {
             font-size: 0.9rem;
             font-weight: 700;
             color: #334155;
@@ -561,9 +518,7 @@
             margin-top: 10px;
             box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
         }
-        .contact-btn:hover {
-            opacity: 0.9;
-        }
+        .contact-btn:hover { opacity: 0.9; }
 
         .form-modal-content {
             background-color: #ffffff;
@@ -604,7 +559,6 @@
             background: #ffffff;
         }
 
-        /* 簡易編輯器工具列與區塊樣式 */
         .editor-wrapper {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
@@ -665,9 +619,7 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .submit-btn:hover {
-            opacity: 0.9;
-        }
+        .submit-btn:hover { opacity: 0.9; }
 
         .corner-admin-btn {
             position: fixed;
@@ -747,16 +699,11 @@
                         <span class="status-badge" id="modalStatus">尚有餘額</span>
                         <span class="art-price" id="modalPrice"></span>
                     </div>
-                    <!-- 詳細介紹 -->
                     <div class="modal-desc" id="modalDesc"></div>
-                    
-                    <!-- 繪製流程區塊 -->
                     <div class="modal-process-box" id="modalProcessBox">
                         <div class="modal-process-title"><i class="fa-solid fa-sparkles" style="color: var(--accent-color);"></i> 繪製流程</div>
                         <div class="modal-process-desc" id="modalProcessText"></div>
                     </div>
-
-                    <!-- 常見問題區塊 -->
                     <div class="modal-faq-box" id="modalFaqBox">
                         <div class="modal-faq-title"><i class="fa-solid fa-circle-question" style="color: var(--accent-color);"></i> 常見問題 / 委託須知</div>
                         <div class="modal-faq-desc" id="modalFaqText"></div>
@@ -777,7 +724,7 @@
             <span class="close-btn" id="closeAddModal">&times;</span>
             <h2 id="modalFormTitle" style="margin-bottom: 20px; font-weight: 700; color: #0f172a;">新增委託項目</h2>
             <form id="addArtForm">
-                <input type="hidden" id="editArtId">
+                <input type="hidden" id="editArtKey">
                 <div class="form-group">
                     <label>上方小標籤 (例如：Q版 / 5天內)</label>
                     <input type="text" id="inputTag" required placeholder="Q版 / 5天內">
@@ -801,47 +748,39 @@
                         <option value="暫停中">暫停中</option>
                     </select>
                 </div>
-
-                <!-- 具備粗體、斜體、清單工具列的輸入欄位 -->
                 <div class="form-group">
                     <label>詳細介紹 / 規格說明</label>
                     <div class="editor-wrapper">
                         <div class="editor-toolbar">
                             <button type="button" onclick="formatText('inputDesc', '<b>', '</b>')" title="粗體"><i class="fa-solid fa-bold"></i></button>
                             <button type="button" onclick="formatText('inputDesc', '<i>', '</i>')" title="斜體"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" onclick="formatText('inputDesc', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單 (排比)"><i class="fa-solid fa-list-ul"></i></button>
-                            <button type="button" onclick="formatText('inputDesc', '<ol>\n  <li>', '</li>\n</ol>')" title="數字清單"><i class="fa-solid fa-list-ol"></i></button>
+                            <button type="button" onclick="formatText('inputDesc', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
                         <textarea id="inputDesc" class="editor-textarea" placeholder="點擊上方按鈕可插入粗體、斜體或清單..."></textarea>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>繪製流程</label>
                     <div class="editor-wrapper">
                         <div class="editor-toolbar">
                             <button type="button" onclick="formatText('inputProcess', '<b>', '</b>')" title="粗體"><i class="fa-solid fa-bold"></i></button>
                             <button type="button" onclick="formatText('inputProcess', '<i>', '</i>')" title="斜體"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" onclick="formatText('inputProcess', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單 (排比)"><i class="fa-solid fa-list-ul"></i></button>
-                            <button type="button" onclick="formatText('inputProcess', '<ol>\n  <li>', '</li>\n</ol>')" title="數字清單"><i class="fa-solid fa-list-ol"></i></button>
+                            <button type="button" onclick="formatText('inputProcess', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
-                        <textarea id="inputProcess" class="editor-textarea" placeholder="1. 討論設定與草稿&#10;2. 確認草稿後付款..."></textarea>
+                        <textarea id="inputProcess" class="editor-textarea" placeholder="1. 討論設定與草稿..."></textarea>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>常見問題 / 補充須知</label>
                     <div class="editor-wrapper">
                         <div class="editor-toolbar">
                             <button type="button" onclick="formatText('inputFaq', '<b>', '</b>')" title="粗體"><i class="fa-solid fa-bold"></i></button>
                             <button type="button" onclick="formatText('inputFaq', '<i>', '</i>')" title="斜體"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" onclick="formatText('inputFaq', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單 (排比)"><i class="fa-solid fa-list-ul"></i></button>
-                            <button type="button" onclick="formatText('inputFaq', '<ol>\n  <li>', '</li>\n</ol>')" title="數字清單"><i class="fa-solid fa-list-ol"></i></button>
+                            <button type="button" onclick="formatText('inputFaq', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
-                        <textarea id="inputFaq" class="editor-textarea" placeholder="Q: 請問可以商用嗎？&#10;A: 商用費用另計..."></textarea>
+                        <textarea id="inputFaq" class="editor-textarea" placeholder="Q: 請問可以商用嗎？..."></textarea>
                     </div>
                 </div>
-
                 <button type="submit" class="submit-btn" id="submitFormBtn">確認新增</button>
             </form>
         </div>
@@ -851,11 +790,23 @@
         <p>&copy; 2026 非商業委託專用頁面</p>
     </footer>
 
+    <!-- 讓 formatText 全域可用 -->
     <script>
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        function formatText(elementId, openTag, closeTag) {
+            const textarea = document.getElementById(elementId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.substring(0, start) + openTag + text.substring(start, end) + closeTag + text.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + openTag.length, end + openTag.length);
+        }
+    </script>
 
-        // 你的 Firebase 設定
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAvTw_ojk-IMFePoNJUQ67p-qJeV1r1QP0",
             authDomain: "my-commission-web.firebaseapp.com",
@@ -867,457 +818,251 @@
             measurementId: "G-C6XQKRNE98"
         };
 
-        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         const gallery = document.getElementById('gallery');
+        let isAdmin = false;
+        let globalArtworks = [];
 
-        // 預設項目（如果雲端是空的會自動寫入）
-        const defaultArtworks = [
-            { id: 1, tag: "插圖", title: "雙人精緻插圖", images: ["https://via.placeholder.com/300"], price: "5500+", status: "尚有餘額", description: "範例說明1", process: "草稿->完工", faq: "無" },
-            { id: 2, tag: "塗鴉", title: "單人Q版塗鴉", images: ["https://via.placeholder.com/300"], price: "1500+", status: "尚有餘額", description: "範例說明2", process: "草稿->完工", faq: "無" }
-        ];
+        // 後台解鎖按鈕事件
+        const toggleAdminBtn = document.getElementById('toggleAdminBtn');
+        const adminIcon = document.getElementById('adminIcon');
+        const bgToggleBtn = document.getElementById('bgToggleBtn');
+        const openAddModalBtn = document.getElementById('openAddModalBtn');
 
-        // 從雲端載入資料並顯示
+        toggleAdminBtn.addEventListener('click', () => {
+            if (!isAdmin) {
+                const password = prompt('請輸入後台解鎖密碼：');
+                if (password === '1234') {
+                    isAdmin = true;
+                    adminIcon.className = 'fa-solid fa-lock-open';
+                    toggleAdminBtn.style.background = 'rgba(2, 132, 199, 0.2)';
+                    toggleAdminBtn.style.color = 'var(--accent-color)';
+                    bgToggleBtn.style.display = 'inline-flex';
+                    openAddModalBtn.style.display = 'inline-flex';
+                    renderGallery(globalArtworks);
+                    alert('後台已成功解鎖！');
+                } else if (password !== null) {
+                    alert('密碼錯誤！');
+                }
+            } else {
+                isAdmin = false;
+                adminIcon.className = 'fa-solid fa-lock';
+                toggleAdminBtn.style.background = '';
+                toggleAdminBtn.style.color = '';
+                bgToggleBtn.style.display = 'none';
+                openAddModalBtn.style.display = 'none';
+                renderGallery(globalArtworks);
+                alert('已登出後台。');
+            }
+        });
+
+        // Modal 控制
+        const addModal = document.getElementById('addModal');
+        const artModal = document.getElementById('artModal');
+        
+        openAddModalBtn.addEventListener('click', () => {
+            document.getElementById('modalFormTitle').innerText = "新增委託項目";
+            document.getElementById('submitFormBtn').innerText = "確認新增";
+            document.getElementById('editArtKey').value = "";
+            document.getElementById('addArtForm').reset();
+            addModal.style.display = 'flex';
+        });
+
+        document.getElementById('closeAddModal').addEventListener('click', () => addModal.style.display = 'none');
+        document.getElementById('closeModal').addEventListener('click', () => artModal.style.display = 'none');
+
+        // 載入資料
         async function loadArtworks() {
             try {
                 const dbRef = ref(db, 'artworks');
                 const snapshot = await get(dbRef);
                 
-                let artworks = [];
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    artworks = Object.keys(data).map(key => ({ firebaseKey: key, ...data[key] }));
+                    globalArtworks = Object.keys(data).map(key => ({ firebaseKey: key, ...data[key] }));
                 } else {
-                    await set(dbRef, defaultArtworks);
-                    artworks = defaultArtworks;
+                    globalArtworks = [];
                 }
-
-                renderGallery(artworks);
+                renderGallery(globalArtworks);
             } catch (error) {
                 console.error("載入資料失敗：", error);
             }
         }
 
-        // 渲染畫面
+        // 渲染藝廊
         function renderGallery(artworks) {
             gallery.innerHTML = '';
             artworks.forEach((art) => {
                 const card = document.createElement('div');
                 card.className = 'art-card';
-                
                 const firstImg = art.images && art.images.length > 0 ? art.images[0] : '';
 
+                let adminMenuHTML = '';
+                if (isAdmin) {
+                    adminMenuHTML = `
+                        <div class="options-menu-container">
+                            <button class="dots-btn" onclick="event.stopPropagation(); toggleDropdown(event, '${art.firebaseKey}')"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                            <div class="dropdown-menu" id="dropdown-${art.firebaseKey}">
+                                <button onclick="event.stopPropagation(); editArt('${art.firebaseKey}')"><i class="fa-solid fa-pen"></i> 編輯</button>
+                                <button class="delete-option" onclick="event.stopPropagation(); deleteArt('${art.firebaseKey}')"><i class="fa-solid fa-trash"></i> 刪除</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 card.innerHTML = `
+                    ${adminMenuHTML}
+                    <div class="top-badge">${art.tag}</div>
                     <div class="art-image-wrapper">
                         <img src="${firstImg}" alt="${art.title}">
                     </div>
                     <div class="art-info">
-                        <span class="status-badge">${art.status || '尚有餘額'}</span>
+                        <span class="status-badge ${art.status === '尚有餘額' ? 'active' : ''}">${art.status || '尚有餘額'}</span>
                         <h3 class="art-title">${art.title}</h3>
                         <div class="art-footer-row">
-                            <span>${art.tag}</span>
+                            <span></span>
                             <span class="art-price">NT$ ${art.price}</span>
                         </div>
                     </div>
                 `;
 
-                card.addEventListener('click', () => {
-                    alert(`你點擊了：${art.title}\n價格：NT$ ${art.price}`);
-                });
-
+                card.addEventListener('click', () => openDetailModal(art));
                 gallery.appendChild(card);
             });
         }
 
-        loadArtworks();
-        const defaultArtworks = [
-            {
-                id: 1,
-                tag: "Q版 / 5天內",
-                title: "委託範例：精緻半身",
-                images: [
-                    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80",
-                    "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80"
-                ],
-                price: "5500+",
-                status: "尚有餘額",
-                description: "注意事項：<br>1. 完工時間約 2-3 週。<br>2. 可修改 2 次。",
-                process: "<ul>\n  <li>提出設定與討論</li>\n  <li>收到草稿確認</li>\n  <li>付款後進行完工</li>\n</ul>",
-                faq: "<b>Q: 請問可以商用嗎？</b><br>A: 本項目僅限非商業使用。若需商用請私訊討論。<br><b>Q: 請問有急件服務嗎？</b><br>A: 有，急件需加收 30% 趕工費。"
-            }
-        ];
+        // 開啟詳細檢視 Modal
+        let currentImageIndex = 0;
+        function openDetailModal(art) {
+            document.getElementById('modalTitle').innerText = art.title;
+            document.getElementById('modalPrice').innerText = `NT$ ${art.price}`;
+            document.getElementById('modalStatus').innerText = art.status || '尚有餘額';
+            document.getElementById('modalDesc').innerHTML = art.description || '無詳細說明';
+            document.getElementById('modalProcessText').innerHTML = art.process || '無';
+            document.getElementById('modalFaqText').innerHTML = art.faq || '無';
 
-        let artworks = JSON.parse(localStorage.getItem('commissions'));
-        if (!artworks || artworks.length === 0) {
-            artworks = defaultArtworks;
-            localStorage.setItem('commissions', JSON.stringify(artworks));
-        }
+            const sliderTrack = document.getElementById('sliderTrack');
+            const modalBgLayer = document.getElementById('modalBgLayer');
+            sliderTrack.innerHTML = '';
 
-        let isAdminMode = sessionStorage.getItem('isAdmin') === 'true';
-        let currentActiveArt = null;
-        let currentImgIndex = 0;
-        let draggedIndex = null;
+            const images = art.images && art.images.length > 0 ? art.images : ['https://via.placeholder.com/300'];
+            currentImageIndex = 0;
 
-        const gallery = document.getElementById('gallery');
-        const toggleAdminBtn = document.getElementById('toggleAdminBtn');
-        const adminIcon = document.getElementById('adminIcon');
-        const openAddModalBtn = document.getElementById('openAddModalBtn');
-        const bgToggleBtn = document.getElementById('bgToggleBtn');
-        const addModal = document.getElementById('addModal');
-        const sliderTrack = document.getElementById('sliderTrack');
-        const modalBgLayer = document.getElementById('modalBgLayer');
-
-        const savedBg = localStorage.getItem('customBg');
-        if (savedBg) {
-            document.documentElement.style.setProperty('--bg-image', `url('${savedBg}')`);
-        }
-
-        bgToggleBtn.addEventListener('click', () => {
-            const bgInput = document.createElement('input');
-            bgInput.type = 'file';
-            bgInput.accept = 'image/*';
-            bgInput.onchange = e => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const base64 = event.target.result;
-                        localStorage.setItem('customBg', base64);
-                        document.documentElement.style.setProperty('--bg-image', `url('${base64}')`);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            bgInput.click();
-        });
-
-        updateAdminUI();
-
-        function updateAdminUI() {
-            if (isAdminMode) {
-                adminIcon.className = 'fa-solid fa-unlock';
-                toggleAdminBtn.title = '登出管理';
-                openAddModalBtn.style.display = 'flex';
-                bgToggleBtn.style.display = 'flex';
-            } else {
-                adminIcon.className = 'fa-solid fa-lock';
-                toggleAdminBtn.title = '後台登入';
-                openAddModalBtn.style.display = 'none';
-                bgToggleBtn.style.display = 'none';
-            }
-            renderGallery();
-        }
-
-        toggleAdminBtn.addEventListener('click', () => {
-            if (isAdminMode) {
-                isAdminMode = false;
-                sessionStorage.removeItem('isAdmin');
-                updateAdminUI();
-            } else {
-                const password = prompt('請輸入管理者密碼：');
-                if (password === '0926') { 
-                    isAdminMode = true;
-                    sessionStorage.setItem('isAdmin', 'true');
-                    updateAdminUI();
-                } else if (password !== null) {
-                    alert('密碼錯誤！');
-                }
-            }
-        });
-
-        openAddModalBtn.addEventListener('click', () => {
-            document.getElementById('modalFormTitle').textContent = '新增委託項目';
-            document.getElementById('submitFormBtn').textContent = '確認新增';
-            document.getElementById('editArtId').value = '';
-            addArtForm.reset();
-            addModal.style.display = 'flex';
-        });
-
-        // 快捷插入標籤功能（支援粗體、斜體、清單）
-        window.formatText = function(elementId, openTag, closeTag) {
-            const textarea = document.getElementById(elementId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            const selectedText = text.substring(start, end);
-
-            textarea.value = text.substring(0, start) + openTag + selectedText + closeTag + text.substring(end);
-            textarea.focus();
-            textarea.setSelectionRange(start + openTag.length, end + openTag.length);
-        }
-
-        function renderGallery() {
-            gallery.innerHTML = '';
-            artworks.forEach((art, index) => {
-                const card = document.createElement('div');
-                card.className = 'art-card';
-                if (isAdminMode) {
-                    card.classList.add('draggable-enabled');
-                    card.setAttribute('draggable', 'true');
-                }
-                
-                const hasMultiple = art.images.length > 1;
-                const formattedPrice = art.price ? (art.price.startsWith('NTD$') ? art.price : 'NTD$' + art.price) : '';
-                
-                card.innerHTML = `
-                    ${isAdminMode ? `
-                        <div class="options-menu-container">
-                            <button class="dots-btn" onclick="toggleMenu(event, ${art.id})"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                            <div class="dropdown-menu" id="menu-${art.id}">
-                                <button onclick="openEditModal(event, ${art.id})"><i class="fa-solid fa-pen"></i> 編輯項目</button>
-                                <button class="delete-option" onclick="deleteArt(event, ${art.id})"><i class="fa-solid fa-trash"></i> 刪除項目</button>
-                            </div>
-                        </div>
-                    ` : ''}
-                    <div class="art-image-wrapper">
-                        <img src="${art.images[0]}" alt="${art.title}">
-                        <span class="top-badge">${art.tag || '委託項目'}</span>
-                        ${hasMultiple ? `<span class="multi-badge"><i class="fa-regular fa-images"></i> ${art.images.length}</span>` : ''}
-                    </div>
-                    <div class="art-info">
-                        <h3 class="art-title">${art.title}</h3>
-                        <div class="art-footer-row">
-                            <span class="art-price">${formattedPrice}</span>
-                            <span class="status-badge ${art.status === '尚有餘額' ? 'active' : ''}">${art.status}</span>
-                        </div>
-                    </div>
-                `;
-                
-                if (isAdminMode) {
-                    card.addEventListener('dragstart', (e) => {
-                        draggedIndex = index;
-                        setTimeout(() => card.classList.add('dragging'), 0);
-                    });
-
-                    card.addEventListener('dragend', () => {
-                        card.classList.remove('dragging');
-                        document.querySelectorAll('.art-card').forEach(c => c.classList.remove('drag-over'));
-                    });
-
-                    card.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                    });
-
-                    card.addEventListener('dragenter', (e) => {
-                        e.preventDefault();
-                        if (index !== draggedIndex) {
-                            card.classList.add('drag-over');
-                        }
-                    });
-
-                    card.addEventListener('dragleave', () => {
-                        card.classList.remove('drag-over');
-                    });
-
-                    card.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        if (draggedIndex === null || draggedIndex === index) return;
-
-                        const movedItem = artworks.splice(draggedIndex, 1)[0];
-                        artworks.splice(index, 0, movedItem);
-
-                        localStorage.setItem('commissions', JSON.stringify(artworks));
-                        renderGallery();
-                    });
-                }
-
-                card.addEventListener('click', () => {
-                    openModal(art);
-                });
-                
-                gallery.appendChild(card);
+            images.forEach(imgUrl => {
+                const item = document.createElement('div');
+                item.className = 'slider-item';
+                item.innerHTML = `<img src="${imgUrl.trim()}">`;
+                sliderTrack.appendChild(item);
             });
+
+            modalBgLayer.style.backgroundImage = `url('${images[0].trim()}')`;
+            updateSliderPosition();
+
+            artModal.style.display = 'flex';
         }
 
-        window.toggleMenu = function(event, id) {
-            event.stopPropagation();
+        function updateSliderPosition() {
+            const sliderTrack = document.getElementById('sliderTrack');
+            sliderTrack.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+        }
+
+        document.getElementById('prevImgBtn').addEventListener('click', () => {
+            const track = document.getElementById('sliderTrack');
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateSliderPosition();
+            }
+        });
+
+        document.getElementById('nextImgBtn').addEventListener('click', () => {
+            const track = document.getElementById('sliderTrack');
+            if (currentImageIndex < track.children.length - 1) {
+                currentImageIndex++;
+                updateSliderPosition();
+            }
+        });
+
+        // 登入後台後的選單控制
+        window.toggleDropdown = function(event, key) {
             document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                if (menu.id !== `menu-${id}`) menu.style.display = 'none';
+                if (menu.id !== `dropdown-${key}`) menu.style.display = 'none';
             });
-            const menu = document.getElementById(`menu-${id}`);
+            const menu = document.getElementById(`dropdown-${key}`);
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
+        };
 
         window.addEventListener('click', () => {
             document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
         });
 
-        window.openEditModal = function(event, id) {
-            event.stopPropagation();
-            const art = artworks.find(item => item.id === id);
+        // 編輯項目
+        window.editArt = function(key) {
+            const art = globalArtworks.find(item => item.firebaseKey === key);
             if (!art) return;
 
-            document.getElementById('modalFormTitle').textContent = '編輯委託項目';
-            document.getElementById('submitFormBtn').textContent = '儲存修改';
-            document.getElementById('editArtId').value = art.id;
+            document.getElementById('modalFormTitle').innerText = "編輯委託項目";
+            document.getElementById('submitFormBtn').innerText = "儲存修改";
+            document.getElementById('editArtKey').value = art.firebaseKey;
             document.getElementById('inputTag').value = art.tag || '';
             document.getElementById('inputTitle').value = art.title || '';
-            document.getElementById('inputImages').value = art.images.join(', ');
-            let cleanPrice = art.price ? art.price.replace('NTD$', '').trim() : '';
-            document.getElementById('inputPrice').value = cleanPrice;
+            document.getElementById('inputImages').value = art.images ? art.images.join(', ') : '';
+            document.getElementById('inputPrice').value = art.price || '';
             document.getElementById('inputStatus').value = art.status || '尚有餘額';
             document.getElementById('inputDesc').value = art.description || '';
             document.getElementById('inputProcess').value = art.process || '';
             document.getElementById('inputFaq').value = art.faq || '';
 
             addModal.style.display = 'flex';
-        }
-
-        window.deleteArt = function(event, id) {
-            event.stopPropagation();
-            if (confirm('確定要刪除這個委託項目嗎？')) {
-                artworks = artworks.filter(art => art.id !== id);
-                localStorage.setItem('commissions', JSON.stringify(artworks));
-                renderGallery();
-            }
-        }
-
-        const closeAddModal = document.getElementById('closeAddModal');
-        const addArtForm = document.getElementById('addArtForm');
-
-        addArtForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const editId = document.getElementById('editArtId').value;
-            const rawImages = document.getElementById('inputImages').value;
-            const imagesArray = rawImages.split(',').map(url => url.trim()).filter(url => url.length > 0);
-
-            if (imagesArray.length === 0) {
-                alert('請至少填寫一個有效的圖片網址！');
-                return;
-            }
-
-            if (editId) {
-                const index = artworks.findIndex(item => item.id == editId);
-                if (index !== -1) {
-                    artworks[index] = {
-                        ...artworks[index],
-                        tag: document.getElementById('inputTag').value,
-                        title: document.getElementById('inputTitle').value,
-                        images: imagesArray,
-                        price: document.getElementById('inputPrice').value.trim(),
-                        status: document.getElementById('inputStatus').value,
-                        description: document.getElementById('inputDesc').value,
-                        process: document.getElementById('inputProcess').value,
-                        faq: document.getElementById('inputFaq').value
-                    };
-                }
-            } else {
-                const newArt = {
-                    id: Date.now(),
-                    tag: document.getElementById('inputTag').value,
-                    title: document.getElementById('inputTitle').value,
-                    images: imagesArray,
-                    price: document.getElementById('inputPrice').value.trim(),
-                    status: document.getElementById('inputStatus').value,
-                    description: document.getElementById('inputDesc').value,
-                    process: document.getElementById('inputProcess').value,
-                    faq: document.getElementById('inputFaq').value
-                };
-                artworks.unshift(newArt);
-            }
-// 將新項目推送到 Firebase 雲端資料庫
-push(ref(db, 'artworks'), newArt).then(() => {
-    addArtForm.reset();
-    addModal.style.display = 'none';
-    loadArtworks(); // 重新從雲端抓取最新資料並重新渲染
-});
-           
-        });
-
-        const modal = document.getElementById('artModal');
-        const closeModal = document.getElementById('closeModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalPrice = document.getElementById('modalPrice');
-        const modalDesc = document.getElementById('modalDesc');
-        const modalStatus = document.getElementById('modalStatus');
-        const modalProcessBox = document.getElementById('modalProcessBox');
-        const modalProcessText = document.getElementById('modalProcessText');
-        const modalFaqBox = document.getElementById('modalFaqBox');
-        const modalFaqText = document.getElementById('modalFaqText');
-        const prevImgBtn = document.getElementById('prevImgBtn');
-        const nextImgBtn = document.getElementById('nextImgBtn');
-
-        const modalOpen = (art) => {
-            currentActiveArt = art;
-            currentImgIndex = 0;
-            
-            sliderTrack.innerHTML = '';
-            art.images.forEach(imgUrl => {
-                const item = document.createElement('div');
-                item.className = 'slider-item';
-                item.innerHTML = `<img src="${imgUrl}" alt="${art.title}">`;
-                sliderTrack.appendChild(item);
-            });
-
-            updateModalContent();
-            modal.style.display = 'flex';
         };
 
-        function openModal(art) {
-            modalOpen(art);
-        }
-
-        function updateModalContent() {
-            sliderTrack.style.transform = `translateX(-${currentImgIndex * 100}%)`;
-            
-            const currentImgUrl = currentActiveArt.images[currentImgIndex];
-            modalBgLayer.style.backgroundImage = `url('${currentImgUrl}')`;
-
-            modalTitle.textContent = currentActiveArt.title;
-            const formattedModalPrice = currentActiveArt.price ? (currentActiveArt.price.startsWith('NTD$') ? currentActiveArt.price : 'NTD$' + currentActiveArt.price) : '';
-            modalPrice.textContent = formattedModalPrice;
-            
-            // 讓彈窗內支援 HTML 格式渲染（粗體、斜體、清單）
-            modalDesc.innerHTML = currentActiveArt.description || '';
-            modalStatus.textContent = currentActiveArt.status;
-            modalStatus.className = `status-badge ${currentActiveArt.status === '尚有餘額' ? 'active' : ''}`;
-
-            if (currentActiveArt.process && currentActiveArt.process.trim() !== '') {
-                modalProcessText.innerHTML = currentActiveArt.process;
-                modalProcessBox.style.display = 'block';
-            } else {
-                modalProcessBox.style.display = 'none';
+        // 刪除項目
+        window.deleteArt = async function(key) {
+            if (confirm('確定要刪除這個委託項目嗎？')) {
+                try {
+                    await remove(ref(db, `artworks/${key}`));
+                    loadArtworks();
+                } catch (error) {
+                    alert('刪除失敗：' + error.message);
+                }
             }
+        };
 
-            if (currentActiveArt.faq && currentActiveArt.faq.trim() !== '') {
-                modalFaqText.innerHTML = currentActiveArt.faq;
-                modalFaqBox.style.display = 'block';
-            } else {
-                modalFaqBox.style.display = 'none';
+        // 表單送出 (新增或修改)
+        document.getElementById('addArtForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const key = document.getElementById('editArtKey').value;
+            const imagesInput = document.getElementById('inputImages').value;
+            const imagesArray = imagesInput.split(',').map(url => url.trim()).filter(url => url.length > 0);
+
+            const artData = {
+                tag: document.getElementById('inputTag').value,
+                title: document.getElementById('inputTitle').value,
+                images: imagesArray,
+                price: document.getElementById('inputPrice').value,
+                status: document.getElementById('inputStatus').value,
+                description: document.getElementById('inputDesc').value,
+                process: document.getElementById('inputProcess').value,
+                faq: document.getElementById('inputFaq').value
+            };
+
+            try {
+                if (key) {
+                    await update(ref(db, `artworks/${key}`), artData);
+                    alert('修改成功！');
+                } else {
+                    await push(ref(db, 'artworks'), artData);
+                    alert('新增成功！');
+                }
+                addModal.style.display = 'none';
+                loadArtworks();
+            } catch (error) {
+                alert('操作失敗：' + error.message);
             }
-
-            if (currentActiveArt.images.length > 1) {
-                prevImgBtn.style.display = 'flex';
-                nextImgBtn.style.display = 'flex';
-            } else {
-                prevImgBtn.style.display = 'none';
-                nextImgBtn.style.display = 'none';
-            }
-        }
-
-        prevImgBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            currentImgIndex = (currentImgIndex - 1 + currentActiveArt.images.length) % currentActiveArt.images.length;
-            updateModalContent();
         });
 
-        nextImgBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            currentImgIndex = (currentImgIndex + 1) % currentActiveArt.images.length;
-            updateModalContent();
-        });
-
-        closeModal.addEventListener('click', () => modal.style.display = 'none');
-        closeAddModal.addEventListener('click', () => addModal.style.display = 'none');
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) modal.style.display = 'none';
-            if (e.target === addModal) addModal.style.display = 'none';
-        });
-
-        renderGallery();
+        loadArtworks();
     </script>
 </body>
 </html>
