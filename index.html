@@ -852,6 +852,86 @@
     </footer>
 
     <script>
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // 你的 Firebase 設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvTw_ojk-IMFePoNJUQ67p-qJeV1r1QP0",
+            authDomain: "my-commission-web.firebaseapp.com",
+            databaseURL: "https://my-commission-web-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "my-commission-web",
+            storageBucket: "my-commission-web.firebasestorage.app",
+            messagingSenderId: "978283527594",
+            appId: "1:978283527594:web:f6f9535dcd52b926beffd3",
+            measurementId: "G-C6XQKRNE98"
+        };
+
+        // 初始化 Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const gallery = document.getElementById('gallery');
+
+        // 預設項目（如果雲端是空的會自動寫入）
+        const defaultArtworks = [
+            { id: 1, tag: "插圖", title: "雙人精緻插圖", images: ["https://via.placeholder.com/300"], price: "5500+", status: "尚有餘額", description: "範例說明1", process: "草稿->完工", faq: "無" },
+            { id: 2, tag: "塗鴉", title: "單人Q版塗鴉", images: ["https://via.placeholder.com/300"], price: "1500+", status: "尚有餘額", description: "範例說明2", process: "草稿->完工", faq: "無" }
+        ];
+
+        // 從雲端載入資料並顯示
+        async function loadArtworks() {
+            try {
+                const dbRef = ref(db, 'artworks');
+                const snapshot = await get(dbRef);
+                
+                let artworks = [];
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    artworks = Object.keys(data).map(key => ({ firebaseKey: key, ...data[key] }));
+                } else {
+                    await set(dbRef, defaultArtworks);
+                    artworks = defaultArtworks;
+                }
+
+                renderGallery(artworks);
+            } catch (error) {
+                console.error("載入資料失敗：", error);
+            }
+        }
+
+        // 渲染畫面
+        function renderGallery(artworks) {
+            gallery.innerHTML = '';
+            artworks.forEach((art) => {
+                const card = document.createElement('div');
+                card.className = 'art-card';
+                
+                const firstImg = art.images && art.images.length > 0 ? art.images[0] : '';
+
+                card.innerHTML = `
+                    <div class="art-image-wrapper">
+                        <img src="${firstImg}" alt="${art.title}">
+                    </div>
+                    <div class="art-info">
+                        <span class="status-badge">${art.status || '尚有餘額'}</span>
+                        <h3 class="art-title">${art.title}</h3>
+                        <div class="art-footer-row">
+                            <span>${art.tag}</span>
+                            <span class="art-price">NT$ ${art.price}</span>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    alert(`你點擊了：${art.title}\n價格：NT$ ${art.price}`);
+                });
+
+                gallery.appendChild(card);
+            });
+        }
+
+        loadArtworks();
         const defaultArtworks = [
             {
                 id: 1,
@@ -1137,11 +1217,13 @@
                 };
                 artworks.unshift(newArt);
             }
-
-            localStorage.setItem('commissions', JSON.stringify(artworks));
-            addArtForm.reset();
-            addModal.style.display = 'none';
-            renderGallery();
+// 將新項目推送到 Firebase 雲端資料庫
+push(ref(db, 'artworks'), newArt).then(() => {
+    addArtForm.reset();
+    addModal.style.display = 'none';
+    loadArtworks(); // 重新從雲端抓取最新資料並重新渲染
+});
+           
         });
 
         const modal = document.getElementById('artModal');
