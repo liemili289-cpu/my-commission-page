@@ -155,9 +155,26 @@
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.9);
             box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
             cursor: pointer;
             position: relative;
+        }
+
+        /* 拖曳排序樣式 */
+        .art-card.draggable-enabled {
+            cursor: grab;
+        }
+        .art-card.draggable-enabled:active {
+            cursor: grabbing;
+        }
+        .art-card.dragging {
+            opacity: 0.4;
+            border: 2px dashed var(--accent-color);
+        }
+        .art-card.drag-over {
+            transform: scale(1.04);
+            border-color: var(--accent-color);
+            box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.3);
         }
 
         .art-card:hover {
@@ -199,19 +216,6 @@
             pointer-events: none;
             font-weight: 500;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .multi-badge {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(6px);
-            color: #fff;
-            padding: 4px 10px;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            pointer-events: none;
         }
 
         .art-info {
@@ -481,12 +485,6 @@
             font-size: 0.95rem;
             margin-bottom: 16px;
         }
-        .modal-desc ul, .modal-desc ol,
-        .modal-process-desc ul, .modal-process-desc ol,
-        .modal-faq-desc ul, .modal-faq-desc ol {
-            padding-left: 20px;
-            margin: 6px 0;
-        }
 
         .modal-process-box, .modal-faq-box {
             background: #f8fafc;
@@ -553,21 +551,11 @@
             font-size: 0.95rem;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            background: #ffffff;
-        }
-
         .editor-wrapper {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             background: #f8fafc;
             overflow: hidden;
-        }
-        .editor-wrapper:focus-within {
-            border-color: var(--accent-color);
-            background: #ffffff;
         }
 
         .editor-toolbar {
@@ -590,10 +578,6 @@
             cursor: pointer;
             color: var(--text-primary);
             font-size: 0.85rem;
-        }
-        .editor-toolbar button:hover {
-            background: #e2e8f0;
-            color: var(--accent-color);
         }
 
         .editor-textarea {
@@ -619,7 +603,6 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .submit-btn:hover { opacity: 0.9; }
 
         .corner-admin-btn {
             position: fixed;
@@ -752,33 +735,33 @@
                     <label>詳細介紹 / 規格說明</label>
                     <div class="editor-wrapper">
                         <div class="editor-toolbar">
-                            <button type="button" onclick="formatText('inputDesc', '<b>', '</b>')" title="粗體"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" onclick="formatText('inputDesc', '<i>', '</i>')" title="斜體"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" onclick="formatText('inputDesc', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" onclick="formatText('inputDesc', '<b>', '</b>')"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" onclick="formatText('inputDesc', '<i>', '</i>')"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" onclick="formatText('inputDesc', '<ul>\n  <li>', '</li>\n</ul>')"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
-                        <textarea id="inputDesc" class="editor-textarea" placeholder="點擊上方按鈕可插入粗體、斜體或清單..."></textarea>
+                        <textarea id="inputDesc" class="editor-textarea"></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>繪製流程</label>
                     <div class="editor-wrapper">
                         <div class="editor-toolbar">
-                            <button type="button" onclick="formatText('inputProcess', '<b>', '</b>')" title="粗體"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" onclick="formatText('inputProcess', '<i>', '</i>')" title="斜體"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" onclick="formatText('inputProcess', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" onclick="formatText('inputProcess', '<b>', '</b>')"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" onclick="formatText('inputProcess', '<i>', '</i>')"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" onclick="formatText('inputProcess', '<ul>\n  <li>', '</li>\n</ul>')"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
-                        <textarea id="inputProcess" class="editor-textarea" placeholder="1. 討論設定與草稿..."></textarea>
+                        <textarea id="inputProcess" class="editor-textarea"></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>常見問題 / 補充須知</label>
                     <div class="editor-wrapper">
                         <div class="editor-toolbar">
-                            <button type="button" onclick="formatText('inputFaq', '<b>', '</b>')" title="粗體"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" onclick="formatText('inputFaq', '<i>', '</i>')" title="斜體"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" onclick="formatText('inputFaq', '<ul>\n  <li>', '</li>\n</ul>')" title="項目清單"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" onclick="formatText('inputFaq', '<b>', '</b>')"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" onclick="formatText('inputFaq', '<i>', '</i>')"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" onclick="formatText('inputFaq', '<ul>\n  <li>', '</li>\n</ul>')"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
-                        <textarea id="inputFaq" class="editor-textarea" placeholder="Q: 請問可以商用嗎？..."></textarea>
+                        <textarea id="inputFaq" class="editor-textarea"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" id="submitFormBtn">確認新增</button>
@@ -790,7 +773,6 @@
         <p>&copy; 2026 非商業委託專用頁面</p>
     </footer>
 
-    <!-- 讓 formatText 全域可用 -->
     <script>
         function formatText(elementId, openTag, closeTag) {
             const textarea = document.getElementById(elementId);
@@ -824,8 +806,9 @@
         const gallery = document.getElementById('gallery');
         let isAdmin = false;
         let globalArtworks = [];
+        let draggedCardIndex = null; // 紀錄正在拖曳的卡片索引
 
-        // 後台解鎖按鈕事件
+        // 後台解鎖事件
         const toggleAdminBtn = document.getElementById('toggleAdminBtn');
         const adminIcon = document.getElementById('adminIcon');
         const bgToggleBtn = document.getElementById('bgToggleBtn');
@@ -842,7 +825,6 @@
                     bgToggleBtn.style.display = 'inline-flex';
                     openAddModalBtn.style.display = 'inline-flex';
                     renderGallery(globalArtworks);
-                   
                 } else if (password !== null) {
                     alert('密碼錯誤！');
                 }
@@ -854,14 +836,12 @@
                 bgToggleBtn.style.display = 'none';
                 openAddModalBtn.style.display = 'none';
                 renderGallery(globalArtworks);
-                
             }
         });
 
-        // Modal 控制
         const addModal = document.getElementById('addModal');
         const artModal = document.getElementById('artModal');
-        
+
         openAddModalBtn.addEventListener('click', () => {
             document.getElementById('modalFormTitle').innerText = "新增委託項目";
             document.getElementById('submitFormBtn').innerText = "確認新增";
@@ -873,7 +853,7 @@
         document.getElementById('closeAddModal').addEventListener('click', () => addModal.style.display = 'none');
         document.getElementById('closeModal').addEventListener('click', () => artModal.style.display = 'none');
 
-        // 載入資料
+        // 載入資料並依據 order 順序排序
         async function loadArtworks() {
             try {
                 const dbRef = ref(db, 'artworks');
@@ -882,6 +862,8 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     globalArtworks = Object.keys(data).map(key => ({ firebaseKey: key, ...data[key] }));
+                    // 根據 order 屬性排序
+                    globalArtworks.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
                 } else {
                     globalArtworks = [];
                 }
@@ -891,12 +873,65 @@
             }
         }
 
-        // 渲染藝廊
+        // 渲染藝廊（包含拖曳排序邏輯）
         function renderGallery(artworks) {
             gallery.innerHTML = '';
-            artworks.forEach((art) => {
+            artworks.forEach((art, index) => {
                 const card = document.createElement('div');
                 card.className = 'art-card';
+
+                // 解鎖後台時啟用拖曳功能
+                if (isAdmin) {
+                    card.classList.add('draggable-enabled');
+                    card.setAttribute('draggable', 'true');
+
+                    // 拖曳事件監聽
+                    card.addEventListener('dragstart', (e) => {
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+
+                    card.addEventListener('dragend', () => {
+                        card.classList.remove('dragging');
+                        document.querySelectorAll('.art-card').forEach(c => c.classList.remove('drag-over'));
+                    });
+
+                    card.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        card.classList.add('drag-over');
+                    });
+
+                    card.addEventListener('dragleave', () => {
+                        card.classList.remove('drag-over');
+                    });
+
+                    card.addEventListener('drop', async (e) => {
+                        e.preventDefault();
+                        card.classList.remove('drag-over');
+                        
+                        if (draggedCardIndex !== null && draggedCardIndex !== index) {
+                            // 交換/移動陣列中的項目
+                            const movedItem = globalArtworks.splice(draggedCardIndex, 1)[0];
+                            globalArtworks.splice(index, 0, movedItem);
+
+                            // 更新 Firebase 上的順序數據 (order)
+                            try {
+                                const updates = {};
+                                globalArtworks.forEach((item, idx) => {
+                                    item.order = idx;
+                                    updates[`artworks/${item.firebaseKey}/order`] = idx;
+                                });
+                                await update(ref(db), updates);
+                                renderGallery(globalArtworks);
+                            } catch (err) {
+                                console.error('更新順序失敗：', err);
+                            }
+                        }
+                    });
+                }
+
                 const firstImg = art.images && art.images.length > 0 ? art.images[0] : '';
 
                 let adminMenuHTML = '';
@@ -933,7 +968,7 @@
             });
         }
 
-        // 開啟詳細檢視 Modal
+        // 開啟詳細 Modal
         let currentImageIndex = 0;
         function openDetailModal(art) {
             document.getElementById('modalTitle').innerText = art.title;
@@ -969,7 +1004,6 @@
         }
 
         document.getElementById('prevImgBtn').addEventListener('click', () => {
-            const track = document.getElementById('sliderTrack');
             if (currentImageIndex > 0) {
                 currentImageIndex--;
                 updateSliderPosition();
@@ -984,7 +1018,6 @@
             }
         });
 
-        // 登入後台後的選單控制
         window.toggleDropdown = function(event, key) {
             document.querySelectorAll('.dropdown-menu').forEach(menu => {
                 if (menu.id !== `dropdown-${key}`) menu.style.display = 'none';
@@ -997,7 +1030,6 @@
             document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
         });
 
-        // 編輯項目
         window.editArt = function(key) {
             const art = globalArtworks.find(item => item.firebaseKey === key);
             if (!art) return;
@@ -1017,7 +1049,6 @@
             addModal.style.display = 'flex';
         };
 
-        // 刪除項目
         window.deleteArt = async function(key) {
             if (confirm('確定要刪除這個委託項目嗎？')) {
                 try {
@@ -1029,7 +1060,7 @@
             }
         };
 
-        // 表單送出 (新增或修改)
+        // 表單送出
         document.getElementById('addArtForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const key = document.getElementById('editArtKey').value;
@@ -1050,10 +1081,9 @@
             try {
                 if (key) {
                     await update(ref(db, `artworks/${key}`), artData);
-                    
                 } else {
+                    artData.order = globalArtworks.length; // 新增時放到最後面
                     await push(ref(db, 'artworks'), artData);
-                    
                 }
                 addModal.style.display = 'none';
                 loadArtworks();
