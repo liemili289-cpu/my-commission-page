@@ -834,7 +834,7 @@
         toggleAdminBtn.addEventListener('click', () => {
             if (!isAdmin) {
                 const password = prompt('請輸入後台解鎖密碼：');
-                if (password === '1234') {
+                if (password === '0926') {
                     isAdmin = true;
                     adminIcon.className = 'fa-solid fa-lock-open';
                     toggleAdminBtn.style.background = 'rgba(2, 132, 199, 0.2)';
@@ -842,7 +842,7 @@
                     bgToggleBtn.style.display = 'inline-flex';
                     openAddModalBtn.style.display = 'inline-flex';
                     renderGallery(globalArtworks);
-                    alert('後台已成功解鎖！');
+                   
                 } else if (password !== null) {
                     alert('密碼錯誤！');
                 }
@@ -854,7 +854,7 @@
                 bgToggleBtn.style.display = 'none';
                 openAddModalBtn.style.display = 'none';
                 renderGallery(globalArtworks);
-                alert('已登出後台。');
+                
             }
         });
 
@@ -1050,10 +1050,10 @@
             try {
                 if (key) {
                     await update(ref(db, `artworks/${key}`), artData);
-                    alert('修改成功！');
+                    
                 } else {
                     await push(ref(db, 'artworks'), artData);
-                    alert('新增成功！');
+                    
                 }
                 addModal.style.display = 'none';
                 loadArtworks();
