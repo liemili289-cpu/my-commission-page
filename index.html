@@ -98,7 +98,6 @@
             color: #0f172a;
         }
 
-        /* 篩選標籤列設計（已改為更小、更淺的透明風格） */
         .filter-section {
             max-width: 1300px;
             margin: 0 auto 30px auto;
@@ -240,7 +239,6 @@
             transform: scale(1.06);
         }
 
-        /* 質感小標籤（白色半透明、尺寸更小） */
         .top-badge {
             position: absolute;
             top: 10px;
@@ -416,6 +414,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: grab;
+        }
+        .modal-image-container:active {
+            cursor: grabbing;
         }
 
         .modal-bg-layer {
@@ -449,6 +451,7 @@
             justify-content: center;
             flex-shrink: 0;
             position: relative;
+            overflow: hidden;
         }
 
         .slider-item img {
@@ -458,6 +461,8 @@
             display: block;
             position: relative;
             z-index: 2;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
         }
 
         .slider-btn {
@@ -558,8 +563,17 @@
             font-weight: 700;
             margin-top: 10px;
             box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+            transition: background 0.2s;
         }
         .contact-btn:hover { opacity: 0.9; }
+
+        .contact-btn.disabled-btn {
+            background-color: #cbd5e1;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+            pointer-events: none;
+        }
 
         .form-modal-content {
             background-color: #ffffff;
@@ -699,7 +713,6 @@
         </a>
     </section>
 
-    <!-- 篩選標籤列（前端顯示） -->
     <nav class="filter-section" id="filterContainer">
         <button class="filter-btn active" data-category="全部">全部</button>
     </nav>
@@ -717,7 +730,6 @@
 
     <button class="corner-admin-btn" id="toggleAdminBtn" title="後台登入"><i class="fa-solid fa-lock" id="adminIcon"></i></button>
 
-    <!-- 密碼登入 UI 彈窗 -->
     <div class="modal" id="passwordModal">
         <div class="form-modal-content" style="max-width: 380px;">
             <span class="close-btn" id="closePasswordModal">&times;</span>
@@ -732,7 +744,6 @@
         </div>
     </div>
 
-    <!-- 分類標籤管理彈窗 -->
     <div class="modal" id="categoryModal">
         <div class="form-modal-content" style="max-width: 450px;">
             <span class="close-btn" id="closeCategoryModal">&times;</span>
@@ -745,7 +756,6 @@
         </div>
     </div>
 
-    <!-- 放大版詳情檢視彈窗 -->
     <div class="modal" id="artModal">
         <div class="modal-content">
             <span class="close-btn" id="closeModal">&times;</span>
@@ -772,8 +782,8 @@
                         <div class="modal-faq-desc" id="modalFaqText"></div>
                     </div>
                 </div>
-                <div>
-                    <a href="https://www.facebook.com/li.zi.105016/" target="_blank" class="contact-btn">
+                <div id="modalActionContainer">
+                    <a href="https://www.facebook.com/li.zi.105016/" target="_blank" class="contact-btn" id="modalContactBtn">
                         <i class="fa-brands fa-facebook"></i> 私訊詢問
                     </a>
                 </div>
@@ -781,7 +791,6 @@
         </div>
     </div>
 
-    <!-- 新增 / 編輯項目彈窗 -->
     <div class="modal" id="addModal">
         <div class="form-modal-content">
             <span class="close-btn" id="closeAddModal">&times;</span>
@@ -850,7 +859,7 @@
     </div>
 
     <footer>
-        <p>&copy;  李子的非商業委託專用頁面 COMMISSION-SITE</p>
+        <p>&copy;  李子的非商業委託專用頁面</p>
     </footer>
 
     <script>
@@ -908,7 +917,6 @@
         const submitPasswordBtn = document.getElementById('submitPasswordBtn');
         const closePasswordModal = document.getElementById('closePasswordModal');
 
-        // 讀取背景
         const savedBg = localStorage.getItem('custom_bg_image');
         if (savedBg) {
             document.documentElement.style.setProperty('--bg-image', `url('${savedBg}')`);
@@ -930,7 +938,6 @@
             removeBgBtn.style.display = 'none';
         });
 
-        // 登入後台
         toggleAdminBtn.addEventListener('click', () => {
             if (!isAdmin) {
                 adminPasswordInput.value = '';
@@ -976,7 +983,6 @@
             if (e.key === 'Enter') submitPasswordBtn.click();
         });
 
-        // 分類管理視窗
         openCategoryModalBtn.addEventListener('click', () => {
             inputCategories.value = globalCategories.join(', ');
             categoryModal.style.display = 'flex';
@@ -1017,14 +1023,12 @@
 
         async function loadData() {
             try {
-                // 讀取分類
                 const catSnapshot = await get(ref(db, 'settings/categories'));
                 if (catSnapshot.exists()) {
                     globalCategories = catSnapshot.val();
                 }
                 renderCategories();
 
-                // 讀取作品
                 const artSnapshot = await get(ref(db, 'artworks'));
                 if (artSnapshot.exists()) {
                     const data = artSnapshot.val();
@@ -1049,7 +1053,6 @@
                 filterContainer.appendChild(btn);
             });
 
-            // 綁定篩選點擊事件
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1063,7 +1066,6 @@
         function renderGallery(artworks) {
             gallery.innerHTML = '';
             
-            // 篩選邏輯：支援多條件（可用斜線、逗號或空格區隔）
             const filteredArtworks = artworks.filter(art => {
                 if (currentFilter === '全部') return true;
                 if (!art.tag) return false;
@@ -1164,6 +1166,13 @@
         }
 
         let currentImageIndex = 0;
+        let scale = 1;
+        let posX = 0;
+        let posY = 0;
+        let isDraggingImg = false;
+        let startX = 0;
+        let startY = 0;
+
         function openDetailModal(art) {
             document.getElementById('modalTitle').innerText = art.title;
             document.getElementById('modalPrice').innerText = `NT$ ${art.price}`;
@@ -1172,6 +1181,22 @@
             const statusText = art.status || '尚有餘額';
             modalStatus.innerText = statusText;
             modalStatus.className = statusText === '尚有餘額' ? 'status-badge active' : 'status-badge';
+
+            // 依據狀態調整下方按鈕
+            const modalActionContainer = document.getElementById('modalActionContainer');
+            if (statusText === '暫停中') {
+                modalActionContainer.innerHTML = `
+                    <div class="contact-btn disabled-btn">
+                        <i class="fa-solid fa-ban"></i> 暫停中
+                    </div>
+                `;
+            } else {
+                modalActionContainer.innerHTML = `
+                    <a href="https://www.facebook.com/li.zi.105016/" target="_blank" class="contact-btn" id="modalContactBtn">
+                        <i class="fa-brands fa-facebook"></i> 私訊詢問
+                    </a>
+                `;
+            }
 
             document.getElementById('modalDesc').innerHTML = art.description || '無詳細說明';
             document.getElementById('modalProcessText').innerHTML = art.process || '無';
@@ -1190,8 +1215,23 @@
                 sliderTrack.appendChild(item);
             });
 
+            resetZoom();
             updateSliderPosition();
             artModal.style.display = 'flex';
+        }
+
+        function resetZoom() {
+            scale = 1;
+            posX = 0;
+            posY = 0;
+            applyTransform();
+        }
+
+        function applyTransform() {
+            const currentImg = document.querySelector(`.slider-item:nth-child(${currentImageIndex + 1}) img`);
+            if (currentImg) {
+                currentImg.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+            }
         }
 
         function updateSliderPosition() {
@@ -1203,13 +1243,62 @@
             }
         }
 
+        const modalImageContainer = document.getElementById('modalImageContainer');
+
+        modalImageContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomIntensity = 0.1;
+            if (e.deltaY < 0) {
+                scale = Math.min(scale + zoomIntensity, 5);
+            } else {
+                scale = Math.max(scale - zoomIntensity, 1);
+                if (scale === 1) { posX = 0; posY = 0; }
+            }
+            applyTransform();
+        }, { passive: false });
+
+        modalImageContainer.addEventListener('mousedown', (e) => {
+            if (scale > 1 && e.button === 0) {
+                isDraggingImg = true;
+                startX = e.clientX - posX;
+                startY = e.clientY - posY;
+                e.preventDefault();
+            }
+        });
+
+        modalImageContainer.addEventListener('mousemove', (e) => {
+            if (!isDraggingImg || scale <= 1) return;
+            
+            let newX = e.clientX - startX;
+            let newY = e.clientY - startY;
+
+            const containerRect = modalImageContainer.getBoundingClientRect();
+            const maxX = (containerRect.width * (scale - 1)) / 2;
+            const maxY = (containerRect.height * (scale - 1)) / 2;
+
+            posX = Math.max(-maxX, Math.min(newX, maxX));
+            posY = Math.max(-maxY, Math.min(newY, maxY));
+
+            applyTransform();
+        });
+
+        modalImageContainer.addEventListener('mouseup', () => {
+            isDraggingImg = false;
+        });
+
+        modalImageContainer.addEventListener('mouseleave', () => {
+            isDraggingImg = false;
+        });
+
         document.getElementById('prevImgBtn').addEventListener('click', () => {
             currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : currentImagesList.length - 1;
+            resetZoom();
             updateSliderPosition();
         });
 
         document.getElementById('nextImgBtn').addEventListener('click', () => {
             currentImageIndex = (currentImageIndex < currentImagesList.length - 1) ? currentImageIndex + 1 : 0;
+            resetZoom();
             updateSliderPosition();
         });
 
