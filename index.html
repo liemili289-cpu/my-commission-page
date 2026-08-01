@@ -15,7 +15,6 @@
             --accent-color: #0284c7;
             --border-color: rgba(255, 255, 255, 0.6);
             --danger-color: #ef4444;
-            --badge-bg: rgba(255, 255, 255, 0.85);
             --bg-image: none;
         }
 
@@ -67,7 +66,7 @@
 
         .schedule-section {
             max-width: 1300px;
-            margin: 0 auto 35px auto;
+            margin: 0 auto 25px auto;
             padding: 0 10px;
             text-align: center;
         }
@@ -99,6 +98,44 @@
             color: #0f172a;
         }
 
+        /* 篩選標籤列設計（已改為更小、更淺的透明風格） */
+        .filter-section {
+            max-width: 1300px;
+            margin: 0 auto 30px auto;
+            padding: 0 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            color: #475569;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+            border-color: rgba(2, 132, 199, 0.3);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+        }
+
         .control-bar {
             max-width: 1300px;
             margin: 0 auto 30px auto;
@@ -106,6 +143,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 10px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .action-btn {
@@ -160,7 +199,6 @@
             position: relative;
         }
 
-        /* 拖曳排序樣式 */
         .art-card.draggable-enabled {
             cursor: grab;
         }
@@ -202,30 +240,35 @@
             transform: scale(1.06);
         }
 
+        /* 質感小標籤（白色半透明、尺寸更小） */
         .top-badge {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(255, 255, 255, 0.9);
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(6px);
-            color: #334155;
-            padding: 5px 12px;
-            font-size: 0.75rem;
+            color: #0f172a;
+            padding: 4px 10px;
+            font-size: 0.73rem;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             pointer-events: none;
-            font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 5;
+            letter-spacing: 0.3px;
         }
 
         .art-info {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .art-title {
             font-size: 1.05rem;
             font-weight: 500;
-            margin-bottom: 12px;
             color: #1e293b;
             white-space: nowrap;
             overflow: hidden;
@@ -241,7 +284,7 @@
         .art-price {
             color: var(--accent-color);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
 
         .status-badge {
@@ -262,8 +305,8 @@
 
         .options-menu-container {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 10px;
+            right: 10px;
             z-index: 10;
         }
 
@@ -272,14 +315,14 @@
             backdrop-filter: blur(6px);
             color: #334155;
             border: 1px solid rgba(255, 255, 255, 0.8);
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
@@ -293,7 +336,7 @@
             display: none;
             position: absolute;
             right: 0;
-            top: 40px;
+            top: 38px;
             background: #ffffff;
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -521,7 +564,7 @@
         .form-modal-content {
             background-color: #ffffff;
             border-radius: 16px;
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
             padding: 30px;
             position: relative;
@@ -656,14 +699,51 @@
         </a>
     </section>
 
+    <!-- 篩選標籤列（前端顯示） -->
+    <nav class="filter-section" id="filterContainer">
+        <button class="filter-btn active" data-category="全部">全部</button>
+    </nav>
+
     <div class="control-bar">
-        <button class="action-btn" id="bgToggleBtn" style="display: none;"><i class="fa-solid fa-image"></i> 更換背景圖片</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="action-btn" id="bgToggleBtn" style="display: none;"><i class="fa-solid fa-image"></i> 更換背景圖片</button>
+            <button class="action-btn" id="removeBgBtn" style="display: none; color: var(--danger-color); border-color: rgba(239, 68, 68, 0.3);"><i class="fa-solid fa-trash-can"></i> 移除背景圖片</button>
+            <button class="action-btn" id="openCategoryModalBtn" style="display: none;"><i class="fa-solid fa-tags"></i> 分類標籤管理</button>
+        </div>
         <button class="action-btn primary" id="openAddModalBtn" style="display: none;"><i class="fa-solid fa-plus"></i> 新增項目</button>
     </div>
 
     <main class="gallery-container" id="gallery"></main>
 
     <button class="corner-admin-btn" id="toggleAdminBtn" title="後台登入"><i class="fa-solid fa-lock" id="adminIcon"></i></button>
+
+    <!-- 密碼登入 UI 彈窗 -->
+    <div class="modal" id="passwordModal">
+        <div class="form-modal-content" style="max-width: 380px;">
+            <span class="close-btn" id="closePasswordModal">&times;</span>
+            <h3 style="margin-bottom: 16px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-lock" style="color: var(--accent-color);"></i> 後台解鎖
+            </h3>
+            <div class="form-group">
+                <label>請輸入管理密碼</label>
+                <input type="password" id="adminPasswordInput" placeholder="輸入密碼">
+            </div>
+            <button type="button" class="submit-btn" id="submitPasswordBtn">確認解鎖</button>
+        </div>
+    </div>
+
+    <!-- 分類標籤管理彈窗 -->
+    <div class="modal" id="categoryModal">
+        <div class="form-modal-content" style="max-width: 450px;">
+            <span class="close-btn" id="closeCategoryModal">&times;</span>
+            <h2 style="margin-bottom: 20px; font-weight: 700; color: #0f172a;">管理篩選分類標籤</h2>
+            <div class="form-group">
+                <label>所有分類（用逗號 , 隔開，例如：圖像, 半身, 全身, Q版, 插畫）</label>
+                <textarea id="inputCategories" class="editor-textarea" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; height: 120px;" placeholder="圖像, 半身, 全身, Q版, 插畫..."></textarea>
+            </div>
+            <button type="button" class="submit-btn" id="saveCategoriesBtn">儲存分類設定</button>
+        </div>
+    </div>
 
     <!-- 放大版詳情檢視彈窗 -->
     <div class="modal" id="artModal">
@@ -679,8 +759,8 @@
                 <div>
                     <h2 class="modal-title" id="modalTitle"></h2>
                     <div class="art-footer-row" style="margin-bottom: 16px;">
+                        <span class="art-price" id="modalPrice" style="font-size: 1.1rem;"></span>
                         <span class="status-badge" id="modalStatus">尚有餘額</span>
-                        <span class="art-price" id="modalPrice"></span>
                     </div>
                     <div class="modal-desc" id="modalDesc"></div>
                     <div class="modal-process-box" id="modalProcessBox">
@@ -709,8 +789,8 @@
             <form id="addArtForm">
                 <input type="hidden" id="editArtKey">
                 <div class="form-group">
-                    <label>上方小標籤 (例如：Q版 / 5天內)</label>
-                    <input type="text" id="inputTag" required placeholder="Q版 / 5天內">
+                    <label>上方小標籤 (例如：Q版 / 3天內)</label>
+                    <input type="text" id="inputTag" required placeholder="Q版 / 3天內">
                 </div>
                 <div class="form-group">
                     <label>項目名稱</label>
@@ -804,38 +884,120 @@
         const db = getDatabase(app);
 
         const gallery = document.getElementById('gallery');
+        const filterContainer = document.getElementById('filterContainer');
         let isAdmin = false;
         let globalArtworks = [];
-        let draggedCardIndex = null; // 紀錄正在拖曳的卡片索引
+        let globalCategories = ['頭像', '半身', '全身', '立繪', 'Q版', '插畫', '怪圖', '貼圖', 'GIF', '漫畫', '組合頁', '表情貼', '驚喜包', '24h 速繪', '角色設計', '服裝設計', '平面設計', '遊戲美術', 'Live2D', '其他'];
+        let currentFilter = '全部';
+        let draggedCardIndex = null;
+        let currentImagesList = [];
 
-        // 後台解鎖事件
         const toggleAdminBtn = document.getElementById('toggleAdminBtn');
         const adminIcon = document.getElementById('adminIcon');
         const bgToggleBtn = document.getElementById('bgToggleBtn');
+        const removeBgBtn = document.getElementById('removeBgBtn');
         const openAddModalBtn = document.getElementById('openAddModalBtn');
+        const openCategoryModalBtn = document.getElementById('openCategoryModalBtn');
+        const categoryModal = document.getElementById('categoryModal');
+        const closeCategoryModal = document.getElementById('closeCategoryModal');
+        const inputCategories = document.getElementById('inputCategories');
+        const saveCategoriesBtn = document.getElementById('saveCategoriesBtn');
 
+        const passwordModal = document.getElementById('passwordModal');
+        const adminPasswordInput = document.getElementById('adminPasswordInput');
+        const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+        const closePasswordModal = document.getElementById('closePasswordModal');
+
+        // 讀取背景
+        const savedBg = localStorage.getItem('custom_bg_image');
+        if (savedBg) {
+            document.documentElement.style.setProperty('--bg-image', `url('${savedBg}')`);
+            removeBgBtn.style.display = 'inline-flex';
+        }
+
+        bgToggleBtn.addEventListener('click', () => {
+            const url = prompt('請輸入背景圖片網址：');
+            if (url) {
+                document.documentElement.style.setProperty('--bg-image', `url('${url}')`);
+                localStorage.setItem('custom_bg_image', url);
+                removeBgBtn.style.display = 'inline-flex';
+            }
+        });
+
+        removeBgBtn.addEventListener('click', () => {
+            document.documentElement.style.setProperty('--bg-image', 'none');
+            localStorage.removeItem('custom_bg_image');
+            removeBgBtn.style.display = 'none';
+        });
+
+        // 登入後台
         toggleAdminBtn.addEventListener('click', () => {
             if (!isAdmin) {
-                const password = prompt('請輸入後台解鎖密碼：');
-                if (password === '0926') {
-                    isAdmin = true;
-                    adminIcon.className = 'fa-solid fa-lock-open';
-                    toggleAdminBtn.style.background = 'rgba(2, 132, 199, 0.2)';
-                    toggleAdminBtn.style.color = 'var(--accent-color)';
-                    bgToggleBtn.style.display = 'inline-flex';
-                    openAddModalBtn.style.display = 'inline-flex';
-                    renderGallery(globalArtworks);
-                } else if (password !== null) {
-                    alert('密碼錯誤！');
-                }
+                adminPasswordInput.value = '';
+                passwordModal.style.display = 'flex';
+                adminPasswordInput.focus();
             } else {
                 isAdmin = false;
                 adminIcon.className = 'fa-solid fa-lock';
                 toggleAdminBtn.style.background = '';
                 toggleAdminBtn.style.color = '';
                 bgToggleBtn.style.display = 'none';
+                removeBgBtn.style.display = localStorage.getItem('custom_bg_image') ? 'inline-flex' : 'none';
                 openAddModalBtn.style.display = 'none';
+                openCategoryModalBtn.style.display = 'none';
                 renderGallery(globalArtworks);
+            }
+        });
+
+        closePasswordModal.addEventListener('click', () => passwordModal.style.display = 'none');
+
+        submitPasswordBtn.addEventListener('click', () => {
+            if (adminPasswordInput.value === '1234') {
+                isAdmin = true;
+                adminIcon.className = 'fa-solid fa-lock-open';
+                toggleAdminBtn.style.background = 'rgba(2, 132, 199, 0.2)';
+                toggleAdminBtn.style.color = 'var(--accent-color)';
+                bgToggleBtn.style.display = 'inline-flex';
+                if (localStorage.getItem('custom_bg_image')) {
+                    removeBgBtn.style.display = 'inline-flex';
+                }
+                openAddModalBtn.style.display = 'inline-flex';
+                openCategoryModalBtn.style.display = 'inline-flex';
+                passwordModal.style.display = 'none';
+                renderGallery(globalArtworks);
+            } else {
+                alert('密碼錯誤！');
+                adminPasswordInput.value = '';
+                adminPasswordInput.focus();
+            }
+        });
+
+        adminPasswordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitPasswordBtn.click();
+        });
+
+        // 分類管理視窗
+        openCategoryModalBtn.addEventListener('click', () => {
+            inputCategories.value = globalCategories.join(', ');
+            categoryModal.style.display = 'flex';
+        });
+        closeCategoryModal.addEventListener('click', () => categoryModal.style.display = 'none');
+
+        saveCategoriesBtn.addEventListener('click', async () => {
+            const rawText = inputCategories.value;
+            const newCats = rawText.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            if (newCats.length === 0) {
+                alert('請至少輸入一個分類！');
+                return;
+            }
+            try {
+                await set(ref(db, 'settings/categories'), newCats);
+                globalCategories = newCats;
+                renderCategories();
+                categoryModal.style.display = 'none';
+                alert('分類標籤更新成功！');
+            } catch (error) {
+                alert('儲存失敗：' + error.message);
             }
         });
 
@@ -853,16 +1015,20 @@
         document.getElementById('closeAddModal').addEventListener('click', () => addModal.style.display = 'none');
         document.getElementById('closeModal').addEventListener('click', () => artModal.style.display = 'none');
 
-        // 載入資料並依據 order 順序排序
-        async function loadArtworks() {
+        async function loadData() {
             try {
-                const dbRef = ref(db, 'artworks');
-                const snapshot = await get(dbRef);
-                
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
+                // 讀取分類
+                const catSnapshot = await get(ref(db, 'settings/categories'));
+                if (catSnapshot.exists()) {
+                    globalCategories = catSnapshot.val();
+                }
+                renderCategories();
+
+                // 讀取作品
+                const artSnapshot = await get(ref(db, 'artworks'));
+                if (artSnapshot.exists()) {
+                    const data = artSnapshot.val();
                     globalArtworks = Object.keys(data).map(key => ({ firebaseKey: key, ...data[key] }));
-                    // 根據 order 屬性排序
                     globalArtworks.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
                 } else {
                     globalArtworks = [];
@@ -873,19 +1039,46 @@
             }
         }
 
-        // 渲染藝廊（包含拖曳排序邏輯）
+        function renderCategories() {
+            filterContainer.innerHTML = `<button class="filter-btn ${currentFilter === '全部' ? 'active' : ''}" data-category="全部">全部</button>`;
+            globalCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `filter-btn ${currentFilter === cat ? 'active' : ''}`;
+                btn.setAttribute('data-category', cat);
+                btn.innerText = cat;
+                filterContainer.appendChild(btn);
+            });
+
+            // 綁定篩選點擊事件
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.getAttribute('data-category');
+                    renderGallery(globalArtworks);
+                });
+            });
+        }
+
         function renderGallery(artworks) {
             gallery.innerHTML = '';
-            artworks.forEach((art, index) => {
+            
+            // 篩選邏輯：支援多條件（可用斜線、逗號或空格區隔）
+            const filteredArtworks = artworks.filter(art => {
+                if (currentFilter === '全部') return true;
+                if (!art.tag) return false;
+                const tags = art.tag.split(/[/,\s]+/).map(t => t.trim());
+                return tags.includes(currentFilter);
+            });
+
+            filteredArtworks.forEach((art, index) => {
                 const card = document.createElement('div');
                 card.className = 'art-card';
 
-                // 解鎖後台時啟用拖曳功能
                 if (isAdmin) {
                     card.classList.add('draggable-enabled');
                     card.setAttribute('draggable', 'true');
 
-                    // 拖曳事件監聽
                     card.addEventListener('dragstart', (e) => {
                         draggedCardIndex = index;
                         card.classList.add('dragging');
@@ -912,11 +1105,11 @@
                         card.classList.remove('drag-over');
                         
                         if (draggedCardIndex !== null && draggedCardIndex !== index) {
-                            // 交換/移動陣列中的項目
-                            const movedItem = globalArtworks.splice(draggedCardIndex, 1)[0];
+                            const movedItem = filteredArtworks.splice(draggedCardIndex, 1)[0];
+                            const originalIndex = globalArtworks.findIndex(item => item.firebaseKey === movedItem.firebaseKey);
+                            globalArtworks.splice(originalIndex, 1);
                             globalArtworks.splice(index, 0, movedItem);
 
-                            // 更新 Firebase 上的順序數據 (order)
                             try {
                                 const updates = {};
                                 globalArtworks.forEach((item, idx) => {
@@ -947,6 +1140,9 @@
                     `;
                 }
 
+                const statusText = art.status || '尚有餘額';
+                const statusClass = statusText === '尚有餘額' ? 'active' : '';
+
                 card.innerHTML = `
                     ${adminMenuHTML}
                     <div class="top-badge">${art.tag}</div>
@@ -954,11 +1150,10 @@
                         <img src="${firstImg}" alt="${art.title}">
                     </div>
                     <div class="art-info">
-                        <span class="status-badge ${art.status === '尚有餘額' ? 'active' : ''}">${art.status || '尚有餘額'}</span>
                         <h3 class="art-title">${art.title}</h3>
                         <div class="art-footer-row">
-                            <span></span>
                             <span class="art-price">NT$ ${art.price}</span>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
                         </div>
                     </div>
                 `;
@@ -968,54 +1163,54 @@
             });
         }
 
-        // 開啟詳細 Modal
         let currentImageIndex = 0;
         function openDetailModal(art) {
             document.getElementById('modalTitle').innerText = art.title;
             document.getElementById('modalPrice').innerText = `NT$ ${art.price}`;
-            document.getElementById('modalStatus').innerText = art.status || '尚有餘額';
+            
+            const modalStatus = document.getElementById('modalStatus');
+            const statusText = art.status || '尚有餘額';
+            modalStatus.innerText = statusText;
+            modalStatus.className = statusText === '尚有餘額' ? 'status-badge active' : 'status-badge';
+
             document.getElementById('modalDesc').innerHTML = art.description || '無詳細說明';
             document.getElementById('modalProcessText').innerHTML = art.process || '無';
             document.getElementById('modalFaqText').innerHTML = art.faq || '無';
 
             const sliderTrack = document.getElementById('sliderTrack');
-            const modalBgLayer = document.getElementById('modalBgLayer');
             sliderTrack.innerHTML = '';
 
-            const images = art.images && art.images.length > 0 ? art.images : ['https://via.placeholder.com/300'];
+            currentImagesList = art.images && art.images.length > 0 ? art.images : ['https://via.placeholder.com/300'];
             currentImageIndex = 0;
 
-            images.forEach(imgUrl => {
+            currentImagesList.forEach(imgUrl => {
                 const item = document.createElement('div');
                 item.className = 'slider-item';
                 item.innerHTML = `<img src="${imgUrl.trim()}">`;
                 sliderTrack.appendChild(item);
             });
 
-            modalBgLayer.style.backgroundImage = `url('${images[0].trim()}')`;
             updateSliderPosition();
-
             artModal.style.display = 'flex';
         }
 
         function updateSliderPosition() {
             const sliderTrack = document.getElementById('sliderTrack');
+            const modalBgLayer = document.getElementById('modalBgLayer');
             sliderTrack.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+            if (currentImagesList[currentImageIndex]) {
+                modalBgLayer.style.backgroundImage = `url('${currentImagesList[currentImageIndex].trim()}')`;
+            }
         }
 
         document.getElementById('prevImgBtn').addEventListener('click', () => {
-            if (currentImageIndex > 0) {
-                currentImageIndex--;
-                updateSliderPosition();
-            }
+            currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : currentImagesList.length - 1;
+            updateSliderPosition();
         });
 
         document.getElementById('nextImgBtn').addEventListener('click', () => {
-            const track = document.getElementById('sliderTrack');
-            if (currentImageIndex < track.children.length - 1) {
-                currentImageIndex++;
-                updateSliderPosition();
-            }
+            currentImageIndex = (currentImageIndex < currentImagesList.length - 1) ? currentImageIndex + 1 : 0;
+            updateSliderPosition();
         });
 
         window.toggleDropdown = function(event, key) {
@@ -1053,14 +1248,13 @@
             if (confirm('確定要刪除這個委託項目嗎？')) {
                 try {
                     await remove(ref(db, `artworks/${key}`));
-                    loadArtworks();
+                    loadData();
                 } catch (error) {
                     alert('刪除失敗：' + error.message);
                 }
             }
         };
 
-        // 表單送出
         document.getElementById('addArtForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const key = document.getElementById('editArtKey').value;
@@ -1082,17 +1276,17 @@
                 if (key) {
                     await update(ref(db, `artworks/${key}`), artData);
                 } else {
-                    artData.order = globalArtworks.length; // 新增時放到最後面
+                    artData.order = globalArtworks.length;
                     await push(ref(db, 'artworks'), artData);
                 }
                 addModal.style.display = 'none';
-                loadArtworks();
+                loadData();
             } catch (error) {
                 alert('操作失敗：' + error.message);
             }
         });
 
-        loadArtworks();
+        loadData();
     </script>
 </body>
 </html>
